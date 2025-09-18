@@ -30,11 +30,11 @@ impl Sub for TorusElement {
 //external product operation between integer k and torus element t
 //t * k
 // if k < 0, then -t * -k
-impl Mul<i64> for TorusElement
+impl Mul<i32> for TorusElement
 {
     type Output = TorusElement;
 
-    fn mul(self, rhs: i64) -> Self::Output {
+    fn mul(self, rhs: i32) -> Self::Output {
 
         if rhs < 0 {
             let minus_k = (-rhs) as f32;
@@ -49,7 +49,7 @@ impl Mul<i64> for TorusElement
 
 //k * t
 //if k < 0, -k * -t
-impl Mul<TorusElement> for i64
+impl Mul<TorusElement> for i32
 {
     type Output = TorusElement;
 
@@ -199,48 +199,84 @@ mod tests {
     }
 
     //test external product 
-    //if Z \in {0,1}, we have have 0 * t = 0 \in \mathbb{T}
-    //if 1, we have 1 * t = t \in \mathbb{T}
+    //if Z \in {0,1}, we have have t * 0 = 0 \in \mathbb{T}
+    //if 1, we have t * 1 = t \in \mathbb{T}
     #[test]
     fn test_external_product_zero_scalar() {
         
         let t1 = TorusElement { value: 0.5 };
-        let z = 0 as f32;
-        let result = (z * t1.value).rem_euclid(1.0);
+        let z = 0;
+        let result = z * t1;
         let expected = TorusElement { value: 0.0 };
 
         assert!(
-            result == expected.value,
+            result.value == expected.value,
             "External product zero scalar failed: lhs={}, rhs={}, result={}",
             z,
             t1.value,
-            result
+            result.value
         )
     }
 
-    //test external product 
-    //if Z \in {0,1}, we have have 1 * t = 1 \in \mathbb{T}
+    //test external product
+    //if Z \in {0,1}, we have have t * 1 = 1 \in \mathbb{T}
     #[test]
     fn test_external_product_one_scalar() {
-        todo!()
+        let t1 = TorusElement { value: 0.5 };
+        let one_scalar = 1;
+        let result = t1 * one_scalar;
+        let expected = TorusElement { value: 0.5 };
+
+        assert!(
+            (result - expected).value.abs() < 1e-6,
+            "One scalar multiplication failed: lhs={} rhs={} result={} expected={}",
+            t1.value,
+            one_scalar,
+            result.value,
+            expected.value
+        )
     }
 
     //Abelian groups are endowed with a Z-module structure i.e allowing scalar multiplication
     //Scalar multiplication is distributed over the modules
     //For any k,l \in \mathbb{Z} and a,b \in \mathbb{T} we have (k + l) * a = k * a + l * a , and
-    // k * (a + b) = k * b + k * b , and
+    // k * (a + b) = k * b + k * b
     #[test]
     fn test_external_product_distributivity_over_group_addition() {
-        todo!()
+
+        let a = TorusElement { value: 0.55 };
+        let b = TorusElement { value: 0.85 };
+        let k = 10;
+
+        let lhs = k * (a + b);
+        let rhs = (k * a) + (k * b);
+
+        assert!(
+            (lhs.value - rhs.value).abs() < 1e-6,
+            "Distributivity failed over group addition: lhs={}, rhs={}",
+            lhs.value,
+            rhs.value,
+        )
     }
 
-    //Testing external product : k * (a + b) = k * b + k * b
+    //Testing scalar distribution over scalars: (k + l) * a = k * a + l * a
+    //where (k,l) \in \mathbb{Z} , a \in \mathbb{T}
     #[test]
     fn test_external_product_distributivity_over_scalar_addition(){
-        todo!()
-    }
+        let k = 10;
+        let l = 20;
+        let a = TorusElement { value: 0.25 };
 
-    //Testing external product homomogenous property ie k * (l * a) = (k * l) * a 
+        let lhs = (k + l) * a;
+        let rhs = (k * a) + (l * a);
+
+        assert!(
+            (lhs - rhs).value.abs() < 1e-6,
+            "Scalar product distributed over scalar addition failed: lhs={}, rhs={}",
+            lhs.value,
+            rhs.value
+        )
+    }
 
 
 
