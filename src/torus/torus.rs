@@ -1,8 +1,11 @@
 use std::ops::Add;
 use rand::Rng; // bring the trait into scope
 
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TorusElement {
+
+    // todo - I need to perform a check that the initialized value is in the correct range or convert implicitly.
     pub value: f32,
 }
 
