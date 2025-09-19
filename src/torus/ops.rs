@@ -137,9 +137,10 @@ mod tests {
 
         let t1 = TorusElement { value: 0.55 };
         let inverse_t1 = -t1; // -0.55 mod 1 = 0.45
+        let expected = TorusElement { value: 0.45 };
 
         assert!(
-            inverse_t1.value == 0.45,
+            inverse_t1.eq(&expected),
             "Inverses failed: lhs={:?}, rhs={:?}",
             t1,
             inverse_t1
@@ -210,7 +211,7 @@ mod tests {
         let expected = TorusElement { value: 0.0 };
 
         assert!(
-            result.value == expected.value,
+            result == expected,
             "External product zero scalar failed: lhs={}, rhs={}, result={}",
             z,
             t1.value,
@@ -228,7 +229,7 @@ mod tests {
         let expected = TorusElement { value: 0.5 };
 
         assert!(
-            (result - expected).value.abs() < 1e-6,
+            result == expected,
             "One scalar multiplication failed: lhs={} rhs={} result={} expected={}",
             t1.value,
             one_scalar,
@@ -240,7 +241,7 @@ mod tests {
     //Abelian groups are endowed with a Z-module structure i.e allowing scalar multiplication
     //Scalar multiplication is distributed over the modules
     //For any k,l \in \mathbb{Z} and a,b \in \mathbb{T} we have (k + l) * a = k * a + l * a , and
-    // k * (a + b) = k * b + k * b
+    // k * (a + b) = k * a + k * b
     #[test]
     fn test_external_product_distributivity_over_group_addition() {
 
@@ -252,7 +253,7 @@ mod tests {
         let rhs = (k * a) + (k * b);
 
         assert!(
-            (lhs.value - rhs.value).abs() < 1e-6,
+           lhs.eq(&rhs),
             "Distributivity failed over group addition: lhs={}, rhs={}",
             lhs.value,
             rhs.value,
@@ -271,7 +272,7 @@ mod tests {
         let rhs = (k * a) + (l * a);
 
         assert!(
-            (lhs - rhs).value.abs() < 1e-6,
+            lhs.eq(&rhs),
             "Scalar product distributed over scalar addition failed: lhs={}, rhs={}",
             lhs.value,
             rhs.value

@@ -2,11 +2,24 @@ use std::ops::Add;
 use rand::Rng; // bring the trait into scope
 
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy)]
 pub struct TorusElement {
 
     // todo - I need to perform a check that the initialized value is in the correct range or convert implicitly.
     pub value: f32,
+}
+
+impl PartialEq for TorusElement  {
+    fn eq(&self, other: &Self) -> bool {
+        let epsilon = 1e-6;
+        let diff = (self.value - other.value).abs();
+        (diff < epsilon) || ((1.0 - diff).abs() < epsilon)
+    }
+    fn ne(&self, other: &Self) -> bool {
+        let epsilon = 1e-6;
+        let diff = (self.value - other.value).abs();
+        (diff > epsilon) || ((1.0 - diff).abs() > epsilon)
+    }
 }
 
 #[derive(Debug, Clone)]
