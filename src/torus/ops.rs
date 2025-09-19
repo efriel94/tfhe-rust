@@ -26,6 +26,19 @@ impl Sub for TorusElement {
     }
 }
 
+impl PartialEq for TorusElement  {
+    fn eq(&self, other: &Self) -> bool {
+        let epsilon = 1e-6;
+        let diff = (self.value - other.value).abs();
+        (diff < epsilon) || ((1.0 - diff).abs() < epsilon)
+    }
+    fn ne(&self, other: &Self) -> bool {
+        let epsilon = 1e-6;
+        let diff = (self.value - other.value).abs();
+        (diff > epsilon) || ((1.0 - diff).abs() > epsilon)
+    }
+}
+
 
 //external product operation between integer k and torus element t
 //t * k
