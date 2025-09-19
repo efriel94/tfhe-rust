@@ -1,12 +1,22 @@
-use std::ops::Add;
 use rand::Rng; // bring the trait into scope
 
 
 #[derive(Debug, Clone, Copy)]
 pub struct TorusElement {
-
-    // todo - I need to perform a check that the initialized value is in the correct range or convert implicitly.
     pub value: f32,
+}
+
+impl TorusElement {
+    fn new(torus_element: f32) -> TorusElement {
+
+        let check = (torus_element > 0.0) && (torus_element < 1.0);
+        if check {
+            TorusElement { value: torus_element}
+        } else {
+            //perform implicit conversion mod 1 so that its in the format R/Z mod 1
+            TorusElement { value: ((torus_element).rem_euclid(1.0)) }
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -31,6 +41,15 @@ impl Torus {
             .map(|_| TorusElement { value: rng.random_range(0.0..1.0) as f32})
             .collect();
         Torus { set, element_position: 0 }
+    }
+
+    //Expand torus object with a new torus element, perform implicit conversion if supplied value is not in the required torus range (0,1] 
+    pub fn push(&mut self, new_torus_element: f32) {
+
+        //perform implicit conversion if supplied torus value is not in the range 0,1
+        let new_element = TorusElement::new(new_torus_element);
+        self.set.push(new_element);
+        self.element_position = self.set.len() -1;
     }
 }
 
